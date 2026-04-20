@@ -1,0 +1,27 @@
+server:
+  port: 9094
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: cms-risk-service
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+
+app:
+  auth-service:
+    base-url: ${AUTH_SERVICE_BASE_URL:http://localhost:9091}
+  security:
+    jwt:
+      public-key: ${JWT_PUBLIC_KEY:}
