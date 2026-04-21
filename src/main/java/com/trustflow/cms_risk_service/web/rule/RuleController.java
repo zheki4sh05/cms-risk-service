@@ -7,11 +7,13 @@ import com.trustflow.cms_risk_service.core.rule.application.RuleChangeHistoryDet
 import com.trustflow.cms_risk_service.core.rule.application.RuleChangeHistoryResult;
 import com.trustflow.cms_risk_service.core.rule.application.RuleDetailsResult;
 import com.trustflow.cms_risk_service.core.rule.application.UpdateRuleCommand;
+import com.trustflow.cms_risk_service.core.rule.application.UpdateRuleRiskObjectCommand;
 import com.trustflow.cms_risk_service.core.rule.application.UpdateRuleResult;
 import com.trustflow.cms_risk_service.core.rule.application.port.in.CreateRuleUseCase;
 import com.trustflow.cms_risk_service.core.rule.application.port.in.GetRuleChangeHistoryUseCase;
 import com.trustflow.cms_risk_service.core.rule.application.port.in.GetRuleDetailsUseCase;
 import com.trustflow.cms_risk_service.core.rule.application.port.in.ListRulesUseCase;
+import com.trustflow.cms_risk_service.core.rule.application.port.in.UpdateRuleRiskObjectUseCase;
 import com.trustflow.cms_risk_service.core.rule.application.port.in.UpdateRuleUseCase;
 import com.trustflow.cms_risk_service.web.rule.dto.CreateRuleRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.CreateRuleResponse;
@@ -20,6 +22,7 @@ import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryDetailsRespo
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleDetailsResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRequest;
+import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRiskObjectRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +49,7 @@ public class RuleController {
     private final ListRulesUseCase listRulesUseCase;
     private final GetRuleDetailsUseCase getRuleDetailsUseCase;
     private final UpdateRuleUseCase updateRuleUseCase;
+    private final UpdateRuleRiskObjectUseCase updateRuleRiskObjectUseCase;
     private final GetRuleChangeHistoryUseCase getRuleChangeHistoryUseCase;
     private final RuleWebMapper ruleWebMapper;
 
@@ -96,6 +100,16 @@ public class RuleController {
         UpdateRuleCommand command = ruleWebMapper.toCommand(ruleId, request);
         UpdateRuleResult result = updateRuleUseCase.updateRule(command);
         log.debug("PUT /api/rules/{} updated successfully at {}", ruleId, result.savedAt());
+        return ruleWebMapper.toResponse(result);
+    }
+
+    @PutMapping("/api/rules/{id}/risk-object")
+    public UpdateRuleResponse updateRuleRiskObject(
+            @PathVariable("id") UUID ruleId,
+            @RequestBody UpdateRuleRiskObjectRequest request
+    ) {
+        UpdateRuleRiskObjectCommand command = ruleWebMapper.toRiskObjectCommand(ruleId, request);
+        UpdateRuleResult result = updateRuleRiskObjectUseCase.updateRuleRiskObject(command);
         return ruleWebMapper.toResponse(result);
     }
 }

@@ -1,0 +1,28 @@
+package com.trustflow.cms_risk_service.core.rule.application;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+public record RuleChangeHistoryDetailsResult(
+        UUID id,
+        UUID companyId,
+        UUID ruleId,
+        String ruleName,
+        String description,
+        UUID authorId,
+        String authorName,
+        String condition,
+        UUID categoryId,
+        UUID riskObjectId,
+        String priority,
+        UUID responsibleUserId,
+        List<String> actions,
+        Boolean enabled,
+        String mechanismScriptName,
+        String mechanismScriptContent,
+        UUID createdByUserId,
+        Instant savedAt,
+        Instant changedAt
+) {
+}
