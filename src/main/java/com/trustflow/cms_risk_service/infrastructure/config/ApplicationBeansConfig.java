@@ -1,12 +1,14 @@
 package com.trustflow.cms_risk_service.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
 
 @Configuration
+@EnableConfigurationProperties(RuleHistoryCleanupProperties.class)
 public class ApplicationBeansConfig {
     @Bean
     public Clock clock() {

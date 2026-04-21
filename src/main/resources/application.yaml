@@ -19,9 +19,17 @@ spring:
   flyway:
     enabled: true
 
+logging:
+  level:
+    com.trustflow.cms_risk_service: DEBUG
+
 app:
   auth-service:
     base-url: ${AUTH_SERVICE_BASE_URL:http://localhost:9091}
+  rules-history:
+    cleanup:
+      retention-days: ${RULES_HISTORY_RETENTION_DAYS:30}
+      cron: ${RULES_HISTORY_CLEANUP_CRON:0 0 3 * * *}
   security:
     jwt:
       public-key: ${JWT_PUBLIC_KEY:}

@@ -8,6 +8,7 @@ import com.trustflow.cms_risk_service.core.rule.application.port.in.CreateRuleUs
 import com.trustflow.cms_risk_service.core.rule.application.port.out.PermissionCheckPort;
 import com.trustflow.cms_risk_service.core.rule.application.port.out.RuleCommandRepository;
 import com.trustflow.cms_risk_service.core.rule.domain.Rule;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class CreateRuleService implements CreateRuleUseCase {
     private final Clock clock;
 
     @Override
+    @Transactional
     public CreateRuleResult createRule(CreateRuleCommand command) {
         UserContext userContext = UserContextHolder.getRequired();
         boolean hasPermission = permissionCheckPort.hasPermission(
