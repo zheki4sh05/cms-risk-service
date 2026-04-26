@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -20,31 +22,37 @@ public class IncidentEventPublisher {
             UUID companyId,
             long integrationId,
             String riskObjectId,
-            UUID rulesId,
-            String rulePriority
+            List<RuleResultMessage> rules
     ) {
         try {
             CreateIncidentMessage message = new CreateIncidentMessage(
                     companyId,
                     integrationId,
                     riskObjectId,
-                    rulesId,
-                    rulePriority
+                    rules
             );
             String payload = objectMapper.writeValueAsString(message);
             kafkaTemplate.send(kafkaTopicProperties.incident_topic(), payload);
-            log.info("Published createIncident message for ruleId={} riskObjectId={}", rulesId, riskObjectId);
+            log.info("Published aggregated incident message for riskObjectId={} with rules={}", riskObjectId, rules.size());
         } catch (Exception exception) {
-            log.warn("Failed to publish createIncident message for ruleId={} riskObjectId={}", rulesId, riskObjectId, exception);
+            log.warn("Failed to publish aggregated incident message for riskObjectId={}", riskObjectId, exception);
         }
+    }
+
+    public record RuleResultMessage(
+            UUID rulesId,
+            String rulePriority,
+            String result,
+            boolean found,
+            Map<String, Object> details
+    ) {
     }
 
     private record CreateIncidentMessage(
             UUID companyId,
             long integrationId,
             String riskObjectId,
-            UUID rulesId,
-            String rulePriority
+            List<RuleResultMessage> rules
     ) {
     }
 }

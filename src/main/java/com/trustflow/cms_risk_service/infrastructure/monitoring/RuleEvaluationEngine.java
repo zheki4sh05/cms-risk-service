@@ -10,10 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Base64;
 import java.util.UUID;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -51,6 +55,7 @@ public class RuleEvaluationEngine {
 
         Map<String, JsonNode> executionContext = buildExecutionContext(payload.data(), payload.mappingRules());
         Map<String, Object> scriptContext = toScriptContext(executionContext);
+        List<IncidentEventPublisher.RuleResultMessage> aggregatedRuleResults = new ArrayList<>();
         for (RuleJpaEntity risk : risks) {
             String script = risk.getMechanismScriptContent();
             if (script == null || script.isBlank()) {
@@ -68,7 +73,15 @@ public class RuleEvaluationEngine {
                         scriptContext,
                         executionResult
                 );
-                processExecutionResult(payload, risk, executionResult);
+                aggregatedRuleResults.add(
+                        new IncidentEventPublisher.RuleResultMessage(
+                                risk.getId(),
+                                risk.getPriority(),
+                                executionResult.result(),
+                                executionResult.found(),
+                                executionResult.details()
+                        )
+                );
             } catch (Exception exception) {
                 log.warn(
                         "Groovy script execution failed. riskId={} riskobjectId={} context={}",
@@ -77,8 +90,26 @@ public class RuleEvaluationEngine {
                         scriptContext,
                         exception
                 );
+                Map<String, Object> errorDetails = new LinkedHashMap<>();
+                errorDetails.put("error", "Script execution failed");
+                errorDetails.put("reason", exception.getMessage());
+                aggregatedRuleResults.add(
+                        new IncidentEventPublisher.RuleResultMessage(
+                                risk.getId(),
+                                risk.getPriority(),
+                                "failed",
+                                false,
+                                errorDetails
+                        )
+                );
             }
         }
+        incidentEventPublisher.publishCreateIncident(
+                risks.get(0).getCompanyId(),
+                payload.integrationId(),
+                payload.riskobjectId(),
+                aggregatedRuleResults
+        );
     }
 
     private Map<String, JsonNode> buildExecutionContext(JsonNode data, JsonNode mappingRules) {
@@ -90,67 +121,115 @@ public class RuleEvaluationEngine {
         for (JsonNode rule : mappingRules) {
             String from = rule.path("from").asText(null);
             String to = rule.path("to").asText(null);
-            if (from == null || from.isBlank()) {
+            if (from == null || from.isBlank() || to == null || to.isBlank()) {
                 continue;
             }
 
-            JsonNode value = resolveValueFromData(data, from, to);
-            context.put(from, value);
+            JsonNode value = resolveValueFromData(data, from);
+            context.put(to, value);
         }
         return context;
     }
 
     private Map<String, Object> toScriptContext(Map<String, JsonNode> executionContext) {
+        Map<String, Object> params = new LinkedHashMap<>();
+        executionContext.forEach((key, value) -> params.put(key, objectMapper.convertValue(value, Object.class)));
+
         Map<String, Object> scriptContext = new LinkedHashMap<>();
-        executionContext.forEach((key, value) -> scriptContext.put(key, objectMapper.convertValue(value, Object.class)));
+        scriptContext.put("params", params);
+        // Keep backward compatibility for scripts that reference variables directly.
+        scriptContext.putAll(params);
         return scriptContext;
     }
 
     private ScriptExecutionResult mapExecutionResult(Object rawResult) {
         JsonNode node = objectMapper.valueToTree(rawResult);
+        String status = node.path("result").asText("");
+        if (status.isBlank()) {
+            status = node.path("success").asBoolean(false) ? "success" : "failed";
+        }
         return new ScriptExecutionResult(
-                node.path("result").asText("failed"),
-                node.path("details").asText(""),
+                status,
+                readDetails(node.path("details")),
                 node.path("found").asBoolean(false)
         );
     }
 
-    private void processExecutionResult(MonitoringTakePayload payload, RuleJpaEntity risk, ScriptExecutionResult executionResult) {
-        if (!"success".equalsIgnoreCase(executionResult.result())) {
-            return;
+    private Map<String, Object> readDetails(JsonNode detailsNode) {
+        if (detailsNode == null || detailsNode.isMissingNode() || detailsNode.isNull()) {
+            return Collections.emptyMap();
         }
-        if (!executionResult.found()) {
-            return;
-        }
-        if (risk.getActions() == null || risk.getActions().stream().noneMatch("createIncident"::equalsIgnoreCase)) {
-            return;
+        if (detailsNode.isObject()) {
+            Map<String, Object> rawDetails = objectMapper.convertValue(detailsNode, Map.class);
+            return normalizeDetails(rawDetails);
         }
 
-        incidentEventPublisher.publishCreateIncident(
-                risk.getCompanyId(),
-                payload.integrationId(),
-                payload.riskobjectId(),
-                risk.getId(),
-                risk.getPriority()
-        );
+        Map<String, Object> details = new LinkedHashMap<>();
+        details.put("value", normalizeValue(objectMapper.convertValue(detailsNode, Object.class)));
+        return details;
     }
 
-    private JsonNode resolveValueFromData(JsonNode data, String from, String to) {
-        JsonNode byTo = readByPath(data, to);
-        if (byTo != null) {
-            return byTo;
-        }
+    private Map<String, Object> normalizeDetails(Map<String, Object> rawDetails) {
+        Map<String, Object> normalized = new LinkedHashMap<>();
+        rawDetails.forEach((key, value) -> normalized.put(key, normalizeValue(value)));
+        return normalized;
+    }
 
-        if (to != null && to.startsWith("payload.")) {
-            JsonNode byPayloadPath = readByPath(data, to.substring("payload.".length()));
-            if (byPayloadPath != null) {
-                return byPayloadPath;
+    private Object normalizeValue(Object value) {
+        if (value instanceof byte[] bytes) {
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+        if (value instanceof Map<?, ?> rawMap) {
+            if (looksLikeSerializedGString(rawMap)) {
+                return decodeGStringBytes(rawMap);
             }
-        }
 
+            Map<String, Object> nested = new LinkedHashMap<>();
+            rawMap.forEach((k, v) -> nested.put(String.valueOf(k), normalizeValue(v)));
+            return nested;
+        }
+        if (value instanceof List<?> rawList) {
+            List<Object> normalizedList = new ArrayList<>(rawList.size());
+            for (Object item : rawList) {
+                normalizedList.add(normalizeValue(item));
+            }
+            return normalizedList;
+        }
+        return value;
+    }
+
+    private boolean looksLikeSerializedGString(Map<?, ?> rawMap) {
+        return rawMap.containsKey("bytes")
+                && rawMap.containsKey("strings")
+                && rawMap.containsKey("values");
+    }
+
+    private String decodeGStringBytes(Map<?, ?> rawMap) {
+        Object bytesValue = rawMap.get("bytes");
+        if (bytesValue instanceof byte[] rawBytes) {
+            return new String(rawBytes, StandardCharsets.UTF_8);
+        }
+        if (!(bytesValue instanceof String base64String) || base64String.isBlank()) {
+            return String.valueOf(normalizeValue(bytesValue));
+        }
+        try {
+            return new String(Base64.getDecoder().decode(base64String), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException exception) {
+            return base64String;
+        }
+    }
+
+    private JsonNode resolveValueFromData(JsonNode data, String from) {
         JsonNode byFrom = readByPath(data, from);
         if (byFrom != null) {
             return byFrom;
+        }
+
+        if (from != null && from.startsWith("payload.")) {
+            JsonNode byPayloadPath = readByPath(data, from.substring("payload.".length()));
+            if (byPayloadPath != null) {
+                return byPayloadPath;
+            }
         }
 
         return null;
@@ -198,7 +277,7 @@ public class RuleEvaluationEngine {
 
     private record ScriptExecutionResult(
             String result,
-            String details,
+            Map<String, Object> details,
             boolean found
     ) {
     }
