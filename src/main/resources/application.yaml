@@ -44,6 +44,7 @@ app:
   kafka:
     topics:
       risk-topic: ${KAFKA_RISK_TOPIC:risk_topic}
+      incident-topic: ${KAFKA_INCIDENT_TOPIC:incident_topic}
   security:
     jwt:
       public-key: ${JWT_PUBLIC_KEY:}

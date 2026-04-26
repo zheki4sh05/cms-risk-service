@@ -23,6 +23,8 @@ import java.util.List;
 public class OutbooxMonitoringProcessingScheduler {
     private final OutbooxMonitoringJpaRepository outbooxMonitoringJpaRepository;
     private final RestClient monitoringServiceRestClient;
+    private final MonitoringTakePayloadMapper monitoringTakePayloadMapper;
+    private final RuleEvaluationEngine ruleEvaluationEngine;
 
     @Scheduled(fixedDelayString = "${app.monitoring-processing.fixed-delay-ms:5000}")
     @Transactional
@@ -35,15 +37,6 @@ public class OutbooxMonitoringProcessingScheduler {
 
     private void processRow(OutbooxMonitoringJpaEntity row) {
         log.info("Processing outboox_monitoring row id={} data={}", row.getId(), row.getData());
-
-        try {
-            // Temporary processing imitation as requested.
-            Thread.sleep(500L);
-        } catch (InterruptedException exception) {
-            Thread.currentThread().interrupt();
-            log.warn("Processing interrupted for row id={}", row.getId(), exception);
-            return;
-        }
 
         String monitoringEntityId = extractMonitoringEntityId(row);
         if (monitoringEntityId == null) {
@@ -74,6 +67,17 @@ public class OutbooxMonitoringProcessingScheduler {
         );
 
         if (response.statusCode() == 200) {
+            try {
+                MonitoringTakePayload payload = monitoringTakePayloadMapper.map(response.body());
+                ruleEvaluationEngine.submitForProcessing(payload);
+            } catch (Exception exception) {
+                log.warn(
+                        "Failed to map monitoring response for row id={} monitoringEntity={}",
+                        row.getId(),
+                        monitoringEntityId,
+                        exception
+                );
+            }
             outbooxMonitoringJpaRepository.deleteById(row.getId());
             log.info("Deleted row id={} after successful processing", row.getId());
             return;

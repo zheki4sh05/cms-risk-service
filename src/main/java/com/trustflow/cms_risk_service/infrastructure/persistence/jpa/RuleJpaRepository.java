@@ -10,4 +10,6 @@ public interface RuleJpaRepository extends JpaRepository<RuleJpaEntity, UUID> {
     List<RuleJpaEntity> findAllByCompanyIdOrderBySavedAtDesc(UUID companyId);
 
     Optional<RuleJpaEntity> findByIdAndCompanyId(UUID id, UUID companyId);
+
+    List<RuleJpaEntity> findAllByRiskObjectIdOrderBySavedAtDesc(UUID riskObjectId);
 }
