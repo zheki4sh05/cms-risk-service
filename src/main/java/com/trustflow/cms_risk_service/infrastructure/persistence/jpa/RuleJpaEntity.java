@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +53,19 @@ public class RuleJpaEntity {
 
     @Column(nullable = false)
     private Instant savedAt;
+
+    @Column(nullable = false)
+    private long successCount;
+
+    @Column(nullable = false)
+    private long triggersCount;
+
+    @Column(nullable = false)
+    private long failedCount;
+
+    private Instant lastDateInvocation;
+
+    private LocalDate lastDateTrigger;
 
     public UUID getId() {
         return id;
@@ -163,5 +177,45 @@ public class RuleJpaEntity {
 
     public void setSavedAt(Instant savedAt) {
         this.savedAt = savedAt;
+    }
+
+    public long getSuccessCount() {
+        return successCount;
+    }
+
+    public void setSuccessCount(long successCount) {
+        this.successCount = successCount;
+    }
+
+    public long getTriggersCount() {
+        return triggersCount;
+    }
+
+    public void setTriggersCount(long triggersCount) {
+        this.triggersCount = triggersCount;
+    }
+
+    public long getFailedCount() {
+        return failedCount;
+    }
+
+    public void setFailedCount(long failedCount) {
+        this.failedCount = failedCount;
+    }
+
+    public Instant getLastDateInvocation() {
+        return lastDateInvocation;
+    }
+
+    public void setLastDateInvocation(Instant lastDateInvocation) {
+        this.lastDateInvocation = lastDateInvocation;
+    }
+
+    public LocalDate getLastDateTrigger() {
+        return lastDateTrigger;
+    }
+
+    public void setLastDateTrigger(LocalDate lastDateTrigger) {
+        this.lastDateTrigger = lastDateTrigger;
     }
 }

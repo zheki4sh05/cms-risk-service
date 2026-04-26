@@ -1,5 +1,6 @@
 package com.trustflow.cms_risk_service.infrastructure.kafka;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class IncidentEventPublisher {
     public record RuleResultMessage(
             UUID rulesId,
             String rulePriority,
+            @JsonProperty("responsible_user_id") UUID responsibleUserId,
             String result,
             boolean found,
             Map<String, Object> details

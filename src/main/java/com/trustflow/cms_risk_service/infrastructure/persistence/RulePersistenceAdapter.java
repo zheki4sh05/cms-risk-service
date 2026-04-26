@@ -37,6 +37,15 @@ public class RulePersistenceAdapter implements RuleCommandRepository, RuleQueryR
     @Override
     public Rule save(Rule rule) {
         RuleJpaEntity entity = rulePersistenceMapper.toEntity(rule);
+        if (rule.id() != null) {
+            ruleJpaRepository.findById(rule.id()).ifPresent(existing -> {
+                entity.setSuccessCount(existing.getSuccessCount());
+                entity.setTriggersCount(existing.getTriggersCount());
+                entity.setFailedCount(existing.getFailedCount());
+                entity.setLastDateInvocation(existing.getLastDateInvocation());
+                entity.setLastDateTrigger(existing.getLastDateTrigger());
+            });
+        }
         RuleJpaEntity saved = ruleJpaRepository.save(entity);
         return rulePersistenceMapper.toDomain(saved);
     }

@@ -10,14 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Base64;
 import java.util.UUID;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -27,6 +27,14 @@ import java.util.regex.Pattern;
 @Component
 @RequiredArgsConstructor
 public class RuleEvaluationEngine {
+    private static final int THREAD_POOL_SIZE = 4;
+    private static final String PAYLOAD_PREFIX = "payload.";
+    private static final String SCRIPT_RESULT_SUCCESS = "success";
+    private static final String SCRIPT_RESULT_FAILED = "failed";
+    private static final String ERROR_KEY = "error";
+    private static final String REASON_KEY = "reason";
+    private static final String SCRIPT_EXECUTION_FAILED_TEXT = "Script execution failed";
+
     private static final Pattern UUID_PATTERN =
             Pattern.compile("([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})");
 
@@ -34,7 +42,8 @@ public class RuleEvaluationEngine {
     private final ScriptEngineEvaluator scriptEngineEvaluator;
     private final ObjectMapper objectMapper;
     private final IncidentEventPublisher incidentEventPublisher;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final RuleExecutionStatsService ruleExecutionStatsService;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
     public void submitForProcessing(MonitoringTakePayload payload) {
         executorService.submit(() -> process(payload));
@@ -53,62 +62,96 @@ public class RuleEvaluationEngine {
             return;
         }
 
-        Map<String, JsonNode> executionContext = buildExecutionContext(payload.data(), payload.mappingRules());
-        Map<String, Object> scriptContext = toScriptContext(executionContext);
+        Map<String, Object> scriptContext = buildScriptContext(payload);
         List<IncidentEventPublisher.RuleResultMessage> aggregatedRuleResults = new ArrayList<>();
         for (RuleJpaEntity risk : risks) {
-            String script = risk.getMechanismScriptContent();
-            if (script == null || script.isBlank()) {
-                log.info("Skip script execution for riskId={} because mechanism_script_content is empty", risk.getId());
-                continue;
-            }
-
-            try {
-                Object result = scriptEngineEvaluator.evaluate(script, scriptContext);
-                ScriptExecutionResult executionResult = mapExecutionResult(result);
-                log.info(
-                        "Groovy script execution result. riskId={} riskobjectId={} context={} result={}",
-                        risk.getId(),
-                        payload.riskobjectId(),
-                        scriptContext,
-                        executionResult
-                );
-                aggregatedRuleResults.add(
-                        new IncidentEventPublisher.RuleResultMessage(
-                                risk.getId(),
-                                risk.getPriority(),
-                                executionResult.result(),
-                                executionResult.found(),
-                                executionResult.details()
-                        )
-                );
-            } catch (Exception exception) {
-                log.warn(
-                        "Groovy script execution failed. riskId={} riskobjectId={} context={}",
-                        risk.getId(),
-                        payload.riskobjectId(),
-                        scriptContext,
-                        exception
-                );
-                Map<String, Object> errorDetails = new LinkedHashMap<>();
-                errorDetails.put("error", "Script execution failed");
-                errorDetails.put("reason", exception.getMessage());
-                aggregatedRuleResults.add(
-                        new IncidentEventPublisher.RuleResultMessage(
-                                risk.getId(),
-                                risk.getPriority(),
-                                "failed",
-                                false,
-                                errorDetails
-                        )
-                );
-            }
+            evaluateRule(risk, payload.riskobjectId(), scriptContext)
+                    .ifPresent(aggregatedRuleResults::add);
         }
+
         incidentEventPublisher.publishCreateIncident(
                 risks.get(0).getCompanyId(),
                 payload.integrationId(),
                 payload.riskobjectId(),
                 aggregatedRuleResults
+        );
+    }
+
+    private Map<String, Object> buildScriptContext(MonitoringTakePayload payload) {
+        Map<String, JsonNode> executionContext = buildExecutionContext(payload.data(), payload.mappingRules());
+        return toScriptContext(executionContext);
+    }
+
+    private java.util.Optional<IncidentEventPublisher.RuleResultMessage> evaluateRule(
+            RuleJpaEntity risk,
+            String riskObjectId,
+            Map<String, Object> scriptContext
+    ) {
+        String script = risk.getMechanismScriptContent();
+        if (script == null || script.isBlank()) {
+            log.info("Skip script execution for riskId={} because mechanism_script_content is empty", risk.getId());
+            return java.util.Optional.empty();
+        }
+
+        try {
+            Object rawResult = scriptEngineEvaluator.evaluate(script, scriptContext);
+            ScriptExecutionResult executionResult = mapExecutionResult(rawResult);
+            log.info(
+                    "Groovy script execution result. riskId={} riskobjectId={} context={} result={}",
+                    risk.getId(),
+                    riskObjectId,
+                    scriptContext,
+                    executionResult
+            );
+            registerExecutionStats(risk.getId(), executionResult);
+            return java.util.Optional.of(toRuleResultMessage(risk, executionResult));
+        } catch (Exception exception) {
+            log.warn(
+                    "Groovy script execution failed. riskId={} riskobjectId={} context={}",
+                    risk.getId(),
+                    riskObjectId,
+                    scriptContext,
+                    exception
+            );
+            ruleExecutionStatsService.registerFailure(risk.getId());
+            return java.util.Optional.of(buildFailedRuleResult(risk, exception));
+        }
+    }
+
+    private void registerExecutionStats(UUID ruleId, ScriptExecutionResult executionResult) {
+        if (SCRIPT_RESULT_FAILED.equalsIgnoreCase(executionResult.result())) {
+            ruleExecutionStatsService.registerFailure(ruleId);
+            return;
+        }
+        if (executionResult.found()) {
+            ruleExecutionStatsService.registerTrigger(ruleId);
+            return;
+        }
+        ruleExecutionStatsService.registerSuccess(ruleId);
+    }
+
+    private IncidentEventPublisher.RuleResultMessage toRuleResultMessage(RuleJpaEntity risk, ScriptExecutionResult executionResult) {
+        return new IncidentEventPublisher.RuleResultMessage(
+                risk.getId(),
+                risk.getPriority(),
+                risk.getResponsibleUserId(),
+                executionResult.result(),
+                executionResult.found(),
+                executionResult.details()
+        );
+    }
+
+    private IncidentEventPublisher.RuleResultMessage buildFailedRuleResult(RuleJpaEntity risk, Exception exception) {
+        Map<String, Object> errorDetails = new LinkedHashMap<>();
+        errorDetails.put(ERROR_KEY, SCRIPT_EXECUTION_FAILED_TEXT);
+        errorDetails.put(REASON_KEY, exception.getMessage());
+        return new IncidentEventPublisher.RuleResultMessage(
+                risk.getId(),
+                risk.getPriority(),
+                risk.getResponsibleUserId(),
+                SCRIPT_RESULT_FAILED,
+                false,
+                errorDetails
         );
     }
 
@@ -146,7 +189,7 @@ public class RuleEvaluationEngine {
         JsonNode node = objectMapper.valueToTree(rawResult);
         String status = node.path("result").asText("");
         if (status.isBlank()) {
-            status = node.path("success").asBoolean(false) ? "success" : "failed";
+            status = node.path("success").asBoolean(false) ? SCRIPT_RESULT_SUCCESS : SCRIPT_RESULT_FAILED;
         }
         return new ScriptExecutionResult(
                 status,
@@ -225,8 +268,8 @@ public class RuleEvaluationEngine {
             return byFrom;
         }
 
-        if (from != null && from.startsWith("payload.")) {
-            JsonNode byPayloadPath = readByPath(data, from.substring("payload.".length()));
+        if (from != null && from.startsWith(PAYLOAD_PREFIX)) {
+            JsonNode byPayloadPath = readByPath(data, from.substring(PAYLOAD_PREFIX.length()));
             if (byPayloadPath != null) {
                 return byPayloadPath;
             }
