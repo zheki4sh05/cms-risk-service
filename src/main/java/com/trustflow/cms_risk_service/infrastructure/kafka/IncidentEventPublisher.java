@@ -23,6 +23,7 @@ public class IncidentEventPublisher {
             UUID companyId,
             long integrationId,
             String riskObjectId,
+            String documentId,
             List<RuleResultMessage> rules
     ) {
         try {
@@ -30,6 +31,7 @@ public class IncidentEventPublisher {
                     companyId,
                     integrationId,
                     riskObjectId,
+                    documentId,
                     rules
             );
             String payload = objectMapper.writeValueAsString(message);
@@ -54,6 +56,7 @@ public class IncidentEventPublisher {
             UUID companyId,
             long integrationId,
             String riskObjectId,
+            String documentId,
             List<RuleResultMessage> rules
     ) {
     }

@@ -38,12 +38,18 @@ public class SecurityConfig {
                                 "/v3/api-docs.yaml",
                                 "/webjars/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/internal/rules/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/rules").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/rules").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/risk-categories").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/risk-categories").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/risk-categories/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/risk-categories/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/verification-results").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/verification-results/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/verification-results").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/verification-results/*").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/verification-results/*").authenticated()
                         .anyRequest().authenticated())
                 .exceptionHandling(configurer -> configurer
                         .authenticationEntryPoint((request, response, authException) ->

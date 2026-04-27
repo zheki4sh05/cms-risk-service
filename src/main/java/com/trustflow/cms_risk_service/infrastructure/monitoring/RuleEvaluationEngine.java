@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trustflow.cms_risk_service.infrastructure.kafka.IncidentEventPublisher;
 import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.RuleJpaEntity;
 import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.RuleJpaRepository;
+import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.VerificationResultJpaEntity;
+import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.VerificationResultJpaRepository;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,7 @@ public class RuleEvaluationEngine {
     private final ScriptEngineEvaluator scriptEngineEvaluator;
     private final ObjectMapper objectMapper;
     private final IncidentEventPublisher incidentEventPublisher;
+    private final VerificationResultJpaRepository verificationResultJpaRepository;
     private final RuleExecutionStatsService ruleExecutionStatsService;
     private final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
@@ -55,6 +58,7 @@ public class RuleEvaluationEngine {
             log.warn("Skip rule evaluation: invalid riskobjectId={}", payload.riskobjectId());
             return;
         }
+        String documentId = extractDocumentId(payload.data(), payload.mappingRules());
 
         List<RuleJpaEntity> risks = ruleJpaRepository.findAllByRiskObjectIdOrderBySavedAtDesc(riskObjectId);
         if (risks.isEmpty()) {
@@ -69,12 +73,70 @@ public class RuleEvaluationEngine {
                     .ifPresent(aggregatedRuleResults::add);
         }
 
-        incidentEventPublisher.publishCreateIncident(
-                risks.get(0).getCompanyId(),
-                payload.integrationId(),
+        boolean hasDiscrepancies = aggregatedRuleResults.stream()
+                .anyMatch(IncidentEventPublisher.RuleResultMessage::found);
+        if (hasDiscrepancies) {
+            incidentEventPublisher.publishCreateIncident(
+                    risks.get(0).getCompanyId(),
+                    payload.integrationId(),
+                    payload.riskobjectId(),
+                    documentId,
+                    aggregatedRuleResults
+            );
+            return;
+        }
+
+        saveVerificationResult(risks.get(0).getCompanyId(), payload, documentId);
+    }
+
+    private void saveVerificationResult(UUID companyId, MonitoringTakePayload payload, String documentId) {
+        VerificationResultJpaEntity verificationResult = new VerificationResultJpaEntity();
+        verificationResult.setId(UUID.randomUUID());
+        verificationResult.setCompanyId(companyId);
+        verificationResult.setIntegrationId(payload.integrationId());
+        verificationResult.setRiskObjectId(payload.riskobjectId());
+        verificationResult.setDocumentId(documentId);
+        verificationResult.setData(payload.data());
+        verificationResultJpaRepository.save(verificationResult);
+        log.info(
+                "Saved verification_result for riskObjectId={} without discrepancies. documentId={}",
                 payload.riskobjectId(),
-                aggregatedRuleResults
+                documentId
         );
+    }
+
+    private String extractDocumentId(JsonNode data, JsonNode mappingRules) {
+        if (mappingRules == null || !mappingRules.isArray()) {
+            return null;
+        }
+        for (JsonNode rule : mappingRules) {
+            String to = rule.path("to").asText(null);
+            String from = rule.path("from").asText(null);
+            if (to == null || from == null) {
+                continue;
+            }
+            if (!"id".equalsIgnoreCase(to.trim())) {
+                continue;
+            }
+            JsonNode value = resolveValueFromData(data, from);
+            return toDocumentId(value);
+        }
+        return null;
+    }
+
+    private String toDocumentId(JsonNode value) {
+        if (value == null || value.isMissingNode() || value.isNull()) {
+            return null;
+        }
+        if (value.isTextual()) {
+            String text = value.asText();
+            return text == null || text.isBlank() ? null : text;
+        }
+        if (value.isNumber() || value.isBoolean()) {
+            return value.asText();
+        }
+        String serialized = value.toString();
+        return serialized.isBlank() ? null : serialized;
     }
 
     private Map<String, Object> buildScriptContext(MonitoringTakePayload payload) {
