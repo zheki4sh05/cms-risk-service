@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -199,7 +200,8 @@ public class RuleEvaluationEngine {
                 risk.getResponsibleUserId(),
                 executionResult.result(),
                 executionResult.found(),
-                executionResult.details()
+                executionResult.details(),
+                Instant.now().toString()
         );
     }
 
@@ -213,7 +215,8 @@ public class RuleEvaluationEngine {
                 risk.getResponsibleUserId(),
                 SCRIPT_RESULT_FAILED,
                 false,
-                errorDetails
+                errorDetails,
+                Instant.now().toString()
         );
     }
 

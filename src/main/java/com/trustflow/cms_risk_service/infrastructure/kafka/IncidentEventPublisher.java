@@ -48,7 +48,8 @@ public class IncidentEventPublisher {
             @JsonProperty("responsible_user_id") UUID responsibleUserId,
             String result,
             boolean found,
-            Map<String, Object> details
+            Map<String, Object> details,
+            String detectedAt
     ) {
     }
 
