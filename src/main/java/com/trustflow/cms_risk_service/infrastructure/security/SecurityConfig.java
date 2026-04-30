@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/internal/rules/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/internal/risk-categories").permitAll()
                         .requestMatchers(HttpMethod.POST, "/rules").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/rules").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/risk-categories").authenticated()

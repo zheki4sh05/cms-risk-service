@@ -8,6 +8,7 @@ import com.trustflow.cms_risk_service.core.riskcategory.application.port.in.Mana
 import com.trustflow.cms_risk_service.web.riskcategory.dto.ListRiskCategoriesResponse;
 import com.trustflow.cms_risk_service.web.riskcategory.dto.RiskCategoryResponse;
 import com.trustflow.cms_risk_service.web.riskcategory.dto.UpsertRiskCategoryRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,12 +31,14 @@ public class RiskCategoryController {
     private final ManageRiskCategoriesUseCase manageRiskCategoriesUseCase;
     private final RiskCategoryWebMapper riskCategoryWebMapper;
 
+    @Operation(summary = "Returns all available risk categories.")
     @GetMapping
     public ListRiskCategoriesResponse listCategories() {
         ListRiskCategoriesResult result = manageRiskCategoriesUseCase.listCategories();
         return riskCategoryWebMapper.toListResponse(result);
     }
 
+    @Operation(summary = "Creates a new risk category from the provided payload.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RiskCategoryResponse createCategory(@Valid @RequestBody UpsertRiskCategoryRequest request) {
@@ -44,6 +47,7 @@ public class RiskCategoryController {
         return riskCategoryWebMapper.toResponse(result);
     }
 
+    @Operation(summary = "Updates an existing risk category by its ID.")
     @PutMapping("/{id}")
     public RiskCategoryResponse updateCategory(
             @PathVariable("id") UUID categoryId,
@@ -54,6 +58,7 @@ public class RiskCategoryController {
         return riskCategoryWebMapper.toResponse(result);
     }
 
+    @Operation(summary = "Deletes a risk category by its ID.")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable("id") UUID categoryId) {

@@ -5,6 +5,7 @@ import com.trustflow.cms_risk_service.core.common.exception.NotFoundException;
 import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.RuleJpaEntity;
 import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.RuleJpaRepository;
 import com.trustflow.cms_risk_service.web.rule.dto.InternalRuleResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class InternalRuleController {
     private final RuleJpaRepository ruleJpaRepository;
 
+    @Operation(summary = "Returns rule details for internal localhost-only integrations.")
     @GetMapping("/{id}")
     public InternalRuleResponse getById(
             @PathVariable("id") UUID ruleId,

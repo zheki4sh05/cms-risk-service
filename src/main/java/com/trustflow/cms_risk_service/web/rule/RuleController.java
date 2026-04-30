@@ -24,6 +24,7 @@ import com.trustflow.cms_risk_service.web.rule.dto.RuleDetailsResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRiskObjectRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,18 +54,21 @@ public class RuleController {
     private final GetRuleChangeHistoryUseCase getRuleChangeHistoryUseCase;
     private final RuleWebMapper ruleWebMapper;
 
+    @Operation(summary = "Returns the list of all configured risk rules.")
     @GetMapping("/api/rules")
     public ListRulesResponse listRules() {
         ListRulesResult result = listRulesUseCase.listRules();
         return ruleWebMapper.toListResponse(result);
     }
 
+    @Operation(summary = "Returns full details of a specific risk rule by ID.")
     @GetMapping("/api/rules/{id}")
     public RuleDetailsResponse getRuleDetails(@PathVariable("id") UUID ruleId) {
         RuleDetailsResult result = getRuleDetailsUseCase.getRuleDetails(ruleId);
         return ruleWebMapper.toDetailsResponse(result);
     }
 
+    @Operation(summary = "Returns paginated change history for risk rules with optional search.")
     @GetMapping("/api/rules/change-history")
     public RuleChangeHistoryResponse getRuleChangeHistory(
             @RequestParam("page") int page,
@@ -75,12 +79,14 @@ public class RuleController {
         return ruleWebMapper.toChangeHistoryResponse(result);
     }
 
+    @Operation(summary = "Returns details of a specific rule change history record.")
     @GetMapping("/api/rules/change-history/{id}")
     public RuleChangeHistoryDetailsResponse getRuleChangeHistoryDetails(@PathVariable("id") UUID historyId) {
         RuleChangeHistoryDetailsResult result = getRuleChangeHistoryUseCase.getRuleChangeHistoryDetails(historyId);
         return ruleWebMapper.toChangeHistoryDetailsResponse(result);
     }
 
+    @Operation(summary = "Creates a new risk rule from the provided payload.")
     @PostMapping("/api/rules")
     @ResponseStatus(HttpStatus.CREATED)
     public CreateRuleResponse createRule(
@@ -91,6 +97,7 @@ public class RuleController {
         return ruleWebMapper.toResponse(result);
     }
 
+    @Operation(summary = "Updates an existing risk rule by its ID.")
     @PutMapping("/api/rules/{id}")
     public UpdateRuleResponse updateRule(
             @PathVariable("id") UUID ruleId,
@@ -103,6 +110,7 @@ public class RuleController {
         return ruleWebMapper.toResponse(result);
     }
 
+    @Operation(summary = "Updates only the risk object binding for a specific rule.")
     @PutMapping("/api/rules/{id}/risk-object")
     public UpdateRuleResponse updateRuleRiskObject(
             @PathVariable("id") UUID ruleId,

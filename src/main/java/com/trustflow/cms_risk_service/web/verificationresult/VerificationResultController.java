@@ -8,6 +8,7 @@ import com.trustflow.cms_risk_service.infrastructure.persistence.jpa.Verificatio
 import com.trustflow.cms_risk_service.web.verificationresult.dto.ListVerificationResultsResponse;
 import com.trustflow.cms_risk_service.web.verificationresult.dto.UpsertVerificationResultRequest;
 import com.trustflow.cms_risk_service.web.verificationresult.dto.VerificationResultResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import java.util.UUID;
 public class VerificationResultController {
     private final VerificationResultJpaRepository verificationResultJpaRepository;
 
+    @Operation(summary = "Returns all verification results available for the current company.")
     @GetMapping
     public ListVerificationResultsResponse list() {
         UUID companyId = getCompanyIdFromToken();
@@ -40,12 +42,14 @@ public class VerificationResultController {
         return new ListVerificationResultsResponse(items);
     }
 
+    @Operation(summary = "Returns a single verification result by ID for the current company.")
     @GetMapping("/{id}")
     public VerificationResultResponse getById(@PathVariable("id") UUID id) {
         VerificationResultJpaEntity entity = findByIdForCurrentCompany(id);
         return toResponse(entity);
     }
 
+    @Operation(summary = "Creates a new verification result for the current company.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public VerificationResultResponse create(@Valid @RequestBody UpsertVerificationResultRequest request) {
@@ -58,6 +62,7 @@ public class VerificationResultController {
         return toResponse(saved);
     }
 
+    @Operation(summary = "Updates an existing verification result by ID for the current company.")
     @PutMapping("/{id}")
     public VerificationResultResponse update(
             @PathVariable("id") UUID id,
@@ -69,6 +74,7 @@ public class VerificationResultController {
         return toResponse(saved);
     }
 
+    @Operation(summary = "Deletes a verification result by ID for the current company.")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") UUID id) {
