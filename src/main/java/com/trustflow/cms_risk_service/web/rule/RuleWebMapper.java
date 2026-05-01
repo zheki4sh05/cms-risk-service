@@ -18,6 +18,7 @@ import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryDetailsRespo
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryItemResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleDetailsResponse;
+import com.trustflow.cms_risk_service.web.rule.dto.RuleShortResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRiskObjectRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleResponse;
@@ -56,6 +57,9 @@ public interface RuleWebMapper {
     @Mapping(target = "actions", source = "actions")
     @Mapping(target = "savedAt", expression = "java(result.savedAt().toString())")
     RuleDetailsResponse toDetailsResponse(RuleDetailsResult result);
+
+    @Mapping(target = "priority", expression = "java(result.priority().value())")
+    RuleShortResponse toShortResponse(RuleDetailsResult result);
 
     default List<String> mapActions(List<RuleAction> actions) {
         return actions.stream().map(RuleAction::value).toList();

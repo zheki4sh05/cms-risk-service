@@ -21,6 +21,7 @@ import com.trustflow.cms_risk_service.web.rule.dto.ListRulesResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryDetailsResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleDetailsResponse;
+import com.trustflow.cms_risk_service.web.rule.dto.RuleShortResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRiskObjectRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleResponse;
@@ -66,6 +67,13 @@ public class RuleController {
     public RuleDetailsResponse getRuleDetails(@PathVariable("id") UUID ruleId) {
         RuleDetailsResult result = getRuleDetailsUseCase.getRuleDetails(ruleId);
         return ruleWebMapper.toDetailsResponse(result);
+    }
+
+    @Operation(summary = "Returns short details of a specific risk rule by ID.")
+    @GetMapping("/api/rules/short/{id}")
+    public RuleShortResponse getRuleShortDetails(@PathVariable("id") UUID ruleId) {
+        RuleDetailsResult result = getRuleDetailsUseCase.getRuleDetails(ruleId);
+        return ruleWebMapper.toShortResponse(result);
     }
 
     @Operation(summary = "Returns paginated change history for risk rules with optional search.")
