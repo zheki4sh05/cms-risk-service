@@ -2,6 +2,7 @@ package com.trustflow.cms_risk_service.infrastructure.config;
 
 import com.trustflow.cms_risk_service.infrastructure.auth.AuthServiceProperties;
 import com.trustflow.cms_risk_service.infrastructure.monitoring.MonitoringServiceProperties;
+import com.trustflow.cms_risk_service.infrastructure.riskobject.RiskObjectServiceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,8 @@ import org.springframework.web.client.RestClient;
 @Configuration
 @EnableConfigurationProperties({
         AuthServiceProperties.class,
-        MonitoringServiceProperties.class
+        MonitoringServiceProperties.class,
+        RiskObjectServiceProperties.class
 })
 public class HttpClientsConfig {
     @Bean
@@ -22,6 +24,13 @@ public class HttpClientsConfig {
 
     @Bean
     public RestClient monitoringServiceRestClient(RestClient.Builder builder, MonitoringServiceProperties properties) {
+        return builder
+                .baseUrl(properties.baseUrl())
+                .build();
+    }
+
+    @Bean
+    public RestClient riskObjectServiceRestClient(RestClient.Builder builder, RiskObjectServiceProperties properties) {
         return builder
                 .baseUrl(properties.baseUrl())
                 .build();

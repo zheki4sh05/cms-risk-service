@@ -13,6 +13,11 @@ import java.util.List;
 public interface RulePersistenceMapper {
     @Mapping(target = "priority", expression = "java(rule.priority().value())")
     @Mapping(target = "actions", source = "actions")
+    @Mapping(target = "successCount", ignore = true)
+    @Mapping(target = "triggersCount", ignore = true)
+    @Mapping(target = "failedCount", ignore = true)
+    @Mapping(target = "lastDateInvocation", ignore = true)
+    @Mapping(target = "lastDateTrigger", ignore = true)
     RuleJpaEntity toEntity(Rule rule);
 
     @Mapping(target = "priority", expression = "java(toPriority(entity.getPriority()))")

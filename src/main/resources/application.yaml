@@ -35,6 +35,8 @@ app:
     base-url: ${AUTH_SERVICE_BASE_URL:http://localhost:9091}
   monitoring-service:
     base-url: ${MONITORING_SERVICE_BASE_URL:http://localhost:9093}
+  risk-object-service:
+    base-url: ${RISK_OBJECT_SERVICE_BASE_URL:http://localhost:9093}
   monitoring-processing:
     fixed-delay-ms: ${MONITORING_PROCESSING_DELAY_MS:5000}
   rules-history:

@@ -10,10 +10,17 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RuleListMapper {
+    @Mapping(target = "id", source = "rule.id")
+    @Mapping(target = "name", source = "rule.name")
+    @Mapping(target = "condition", source = "rule.condition")
     @Mapping(target = "action", source = "rule.actions", qualifiedByName = "toActionLabel")
+    @Mapping(target = "categoryId", source = "rule.categoryId")
     @Mapping(target = "priority", expression = "java(rule.priority().value())")
+    @Mapping(target = "enabled", source = "rule.enabled")
+    @Mapping(target = "riskObjectId", source = "rule.riskObjectId")
     @Mapping(target = "categoryLabel", source = "categoryLabel")
-    RuleListItemResult toItemResult(Rule rule, String categoryLabel);
+    @Mapping(target = "riskObject", source = "riskObject")
+    RuleListItemResult toItemResult(Rule rule, String categoryLabel, RiskObjectResult riskObject);
 
     @Named("toActionLabel")
     default String toActionLabel(List<RuleAction> actions) {

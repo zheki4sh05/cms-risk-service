@@ -11,6 +11,7 @@ public record RuleItemResponse(
         String categoryLabel,
         String priority,
         boolean enabled,
-        UUID riskObjectId
+        UUID riskObjectId,
+        RiskObjectResponse riskObject
 ) {
 }

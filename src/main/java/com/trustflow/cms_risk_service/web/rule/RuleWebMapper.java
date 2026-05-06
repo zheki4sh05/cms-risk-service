@@ -10,6 +10,7 @@ import com.trustflow.cms_risk_service.core.rule.application.ListRulesResult;
 import com.trustflow.cms_risk_service.core.rule.application.RuleChangeHistoryItemResult;
 import com.trustflow.cms_risk_service.core.rule.application.RuleChangeHistoryResult;
 import com.trustflow.cms_risk_service.core.rule.application.RuleDetailsResult;
+import com.trustflow.cms_risk_service.core.rule.application.RiskObjectResult;
 import com.trustflow.cms_risk_service.core.rule.domain.RuleAction;
 import com.trustflow.cms_risk_service.web.rule.dto.CreateRuleRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.CreateRuleResponse;
@@ -18,6 +19,7 @@ import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryDetailsRespo
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryItemResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleChangeHistoryResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleDetailsResponse;
+import com.trustflow.cms_risk_service.web.rule.dto.RiskObjectResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.RuleShortResponse;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRequest;
 import com.trustflow.cms_risk_service.web.rule.dto.UpdateRuleRiskObjectRequest;
@@ -43,6 +45,9 @@ public interface RuleWebMapper {
     UpdateRuleResponse toResponse(UpdateRuleResult result);
 
     ListRulesResponse toListResponse(ListRulesResult result);
+
+    @Mapping(target = "updatedAt", expression = "java(result.updatedAt() == null ? null : result.updatedAt().toString())")
+    RiskObjectResponse toRiskObjectResponse(RiskObjectResult result);
 
     RuleChangeHistoryResponse toChangeHistoryResponse(RuleChangeHistoryResult result);
 
