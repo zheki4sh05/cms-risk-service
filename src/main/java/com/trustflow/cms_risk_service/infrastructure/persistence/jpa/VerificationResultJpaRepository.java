@@ -10,4 +10,6 @@ public interface VerificationResultJpaRepository extends JpaRepository<Verificat
     List<VerificationResultJpaEntity> findAllByCompanyIdOrderByIdDesc(UUID companyId);
 
     Optional<VerificationResultJpaEntity> findByIdAndCompanyId(UUID id, UUID companyId);
+
+    long countByCompanyId(UUID companyId);
 }

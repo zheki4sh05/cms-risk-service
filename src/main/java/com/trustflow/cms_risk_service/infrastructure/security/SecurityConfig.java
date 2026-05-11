@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/risk-categories").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/risk-categories/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/risk-categories/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/statistics").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/verification-results").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/verification-results/*").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/verification-results").authenticated()
