@@ -68,24 +68,25 @@ public class UpdateRuleService implements UpdateRuleUseCase {
 
         Rule savedRule = ruleCommandRepository.save(updatedRule);
         log.debug("Rule entity saved: ruleId={} savedAt={}", savedRule.id(), savedRule.savedAt());
+
         ruleCommandRepository.saveHistory(new RuleHistoryWriteCommand(
                 UUID.randomUUID(),
-                savedRule.companyId(),
-                savedRule.id(),
-                savedRule.name(),
+                existingRule.companyId(),
+                existingRule.id(),
+                existingRule.name(),
                 command.description(),
                 userContext.userId(),
-                savedRule.condition(),
-                savedRule.categoryId(),
-                savedRule.riskObjectId(),
-                savedRule.priority().value(),
-                savedRule.responsibleUserId(),
-                savedRule.actions(),
-                savedRule.enabled(),
-                savedRule.mechanismScriptName(),
-                savedRule.mechanismScriptContent(),
-                savedRule.createdByUserId(),
-                savedRule.savedAt(),
+                existingRule.condition(),
+                existingRule.categoryId(),
+                existingRule.riskObjectId(),
+                existingRule.priority().value(),
+                existingRule.responsibleUserId(),
+                existingRule.actions(),
+                existingRule.enabled(),
+                existingRule.mechanismScriptName(),
+                existingRule.mechanismScriptContent(),
+                existingRule.createdByUserId(),
+                existingRule.savedAt(),
                 now
         ));
         log.debug("Rule history saved: ruleId={} historyAuthorId={}", savedRule.id(), userContext.userId());

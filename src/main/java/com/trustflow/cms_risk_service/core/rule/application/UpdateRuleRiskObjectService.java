@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +65,27 @@ public class UpdateRuleRiskObjectService implements UpdateRuleRiskObjectUseCase 
         );
 
         Rule savedRule = ruleCommandRepository.save(updatedRule);
+
+        ruleCommandRepository.saveHistory(new RuleHistoryWriteCommand(
+                UUID.randomUUID(),
+                existingRule.companyId(),
+                existingRule.id(),
+                existingRule.name(),
+                "",
+                userContext.userId(),
+                existingRule.condition(),
+                existingRule.categoryId(),
+                existingRule.riskObjectId(),
+                existingRule.priority().value(),
+                existingRule.responsibleUserId(),
+                existingRule.actions(),
+                existingRule.enabled(),
+                existingRule.mechanismScriptName(),
+                existingRule.mechanismScriptContent(),
+                existingRule.createdByUserId(),
+                existingRule.savedAt(),
+                now
+        ));
 
         log.debug("Rule riskObjectId updated: ruleId={} riskObjectId={} savedAt={}",
                 savedRule.id(), savedRule.riskObjectId(), savedRule.savedAt());
