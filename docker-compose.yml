@@ -1,0 +1,16 @@
+name: cms-risk-service
+
+services:
+  cms-risk-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cms-risk-service:local
+    container_name: cms-risk-service
+    ports:
+      - "${SERVER_PORT:-9094}:9094"
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

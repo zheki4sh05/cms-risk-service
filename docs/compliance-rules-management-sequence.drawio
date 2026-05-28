@@ -1,0 +1,223 @@
+<mxfile host="app.diagrams.net" modified="2026-05-27T14:15:00.000Z" agent="codex" version="24.7.17">
+  <diagram id="compliance-rules-sequence" name="Управлять правилами комплаенса">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Диаграмма последовательности: Управлять правилами комплаенса" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="620" y="20" width="980" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a1" value="Специалист комплаенса" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="170" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" value="UI (веб-клиент)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="250" y="70" width="170" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a3" value="API Gateway / Controller" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#dae8fc;" vertex="1" parent="1">
+          <mxGeometry x="460" y="70" width="190" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" value="ManageRuleService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#d5e8d4;" vertex="1" parent="1">
+          <mxGeometry x="700" y="70" width="180" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a5" value="RuleValidator" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#d5e8d4;" vertex="1" parent="1">
+          <mxGeometry x="930" y="70" width="170" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a6" value="RuleRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#f8cecc;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="70" width="170" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a7" value="AuditLogService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#f8cecc;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="70" width="170" height="1220" as="geometry"/>
+        </mxCell>
+        <mxCell id="a8" value="EventBus / Notification" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;strokeColor=#000000;fillColor=#f8cecc;" vertex="1" parent="1">
+          <mxGeometry x="1590" y="70" width="190" height="1220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m1" value="1. Открыть раздел «Правила комплаенса»" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a1" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="190" y="150"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. Запросить список правил (фильтры, пагинация)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a2" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="185"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3. Получить список правил" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a3" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="220"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="4. Найти правила по параметрам" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="255"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. Вернуть список и метаданные" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a6" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="290"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="6. Вернуть DTO списка правил" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a4" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="325"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="7. Отобразить таблицу правил" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a3" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="360"/></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="altCreateTitle" value="alt [Создание нового правила]" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="390" width="1560" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="m8" value="8. Нажать «Создать правило» и заполнить форму" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a1" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="190" y="450"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="9. POST /rules (данные правила)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a2" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="485"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" value="10. createRule(command)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a3" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="520"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" value="11. Проверить обязательные поля, синтаксис условий, лимиты" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="915" y="555"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" value="12. Проверка пройдена" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a5" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="915" y="590"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13" value="13. Проверить уникальность имени/кода" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="625"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m14" value="14. Правило не найдено" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a6" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="660"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m15" value="15. Сохранить новое правило" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="695"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m16" value="16. ruleCreated(id, версия, статус)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a6" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="730"/></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="m17" value="17. Записать аудит: создание правила" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1300" y="520"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m18" value="18. Опубликовать событие RuleCreated" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1520" y="555"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m19" value="19. 201 Created + карточка правила" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a4" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="590"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m20" value="20. Показать созданное правило" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a3" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="625"/></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="altUpdateTitle" value="alt [Изменение существующего правила]" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="770" width="1560" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="m21" value="21. Открыть правило и внести изменения" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a1" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="190" y="830"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m22" value="22. PUT /rules/{id}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a2" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="865"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m23" value="23. updateRule(command)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a3" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="900"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m24" value="24. Получить текущую версию правила" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="935"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m25" value="25. Вернуть текущие данные правила" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a6" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="970"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m26" value="26. Валидировать изменения + бизнес-ограничения" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="915" y="1005"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m27" value="27. Обновить правило и версию" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1085" y="1040"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m28" value="28. Записать аудит: изменение правила" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1300" y="900"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m29" value="29. Опубликовать событие RuleUpdated" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="a4" target="a8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1520" y="935"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m30" value="30. 200 OK + обновленное правило" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a4" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="970"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m31" value="31. Показать обновленные данные" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="a3" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="1005"/></Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="altErrorTitle" value="alt [Ошибка валидации или конфликт версии]" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;strokeColor=#b85450;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="1085" width="1020" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="m32" value="32. Вернуть ошибку: некорректные данные / конфликт версии" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#b85450;fontColor=#b85450;" edge="1" parent="1" source="a4" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="1135"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m33" value="33. Показать сообщение об ошибке и подсказки" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#b85450;fontColor=#b85450;" edge="1" parent="1" source="a3" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="1170"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m34" value="34. Скорректировать данные и повторить отправку" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#b85450;fontColor=#b85450;" edge="1" parent="1" source="a2" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="420" y="1205"/></Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,115 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.2 Chrome/134.0.6998.205 Electron/35.3.0 Safari/537.36" version="27.0.2">
+  <diagram id="rule-evaluation-flow" name="Оценка правил мониторинга">
+    <mxGraphModel dx="2028" dy="2363" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dec-valid" value="Идентификатор&#xa;объекта риска&#xa;корректен?" style="rhombus;whiteSpace=wrap;html=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="314" y="250" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="dec-rules" value="Найдены&#xa;правила?" style="rhombus;whiteSpace=wrap;html=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="324" y="500" width="140" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="dec-found" value="Есть&#xa;расхождения?" style="rhombus;whiteSpace=wrap;html=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="324" y="750" width="140" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" target="dec-valid" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="394" y="210" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="Нет" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="dec-valid" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="Да" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="dec-valid" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="394" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" target="dec-rules" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="394" y="460" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="Нет" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="dec-rules" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="210" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="Да" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="dec-rules" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="394" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" target="dec-found" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="394" y="710" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="Да" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="dec-found" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="870" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" value="Нет" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="dec-found" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="870" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="930" as="sourcePoint" />
+            <mxPoint x="610" y="970" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="930" as="sourcePoint" />
+            <mxPoint x="180" y="970" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-1" value="Разобрать идентификатор&lt;br&gt;объекта риска" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="300" y="150" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-3" value="Загрузить правила&lt;br&gt;для объекта риска" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="300" y="400" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-5" value="Выполнить скрипты&lt;br&gt;всех правил и&lt;br&gt;собрать результаты" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="284" y="640" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-6" value="Сохранить результат&lt;br&gt;успешной верификации" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="90" y="870" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-7" value="Опубликовать&lt;br&gt;событие инцидента" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="504" y="870" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="4GTQAnKTfp7CAxOd5APU-8" target="4GTQAnKTfp7CAxOd5APU-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-8" value="Начало" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="355" y="-40" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" source="4GTQAnKTfp7CAxOd5APU-9" target="4GTQAnKTfp7CAxOd5APU-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-9" value="Получить данные&lt;br&gt;мониторинга" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="300" y="40" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-12" value="Конец" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="120" y="290" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-13" value="Конец" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="120" y="535" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-14" value="Конец" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="140" y="970" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4GTQAnKTfp7CAxOd5APU-15" value="Конец" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fontFamily=ISOCPEUR;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="569" y="970" width="90" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

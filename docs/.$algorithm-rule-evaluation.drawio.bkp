@@ -1,0 +1,116 @@
+<mxfile host="app.diagrams.net" modified="2026-05-21T00:00:00.000Z" agent="cms-risk-service" version="22.1.0">
+  <diagram id="rule-evaluation-flow" name="Оценка правил мониторинга">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Начало -->
+        <mxCell id="start" value="Начало&#xa;Получить данные&#xa;мониторинга" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="314" y="40" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Парсинг ID -->
+        <mxCell id="parse" value="Разобрать идентификатор&#xa;объекта риска" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="294" y="150" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Решение: ID валиден? -->
+        <mxCell id="dec-valid" value="Идентификатор&#xa;объекта риска&#xa;корректен?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="314" y="250" width="160" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Конец: невалидный ID -->
+        <mxCell id="end-invalid" value="Завершить&#xa;(некорректный ID)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="270" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Загрузка правил -->
+        <mxCell id="load" value="Загрузить правила&#xa;для объекта риска" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="294" y="400" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Решение: есть правила? -->
+        <mxCell id="dec-rules" value="Найдены&#xa;правила?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="324" y="500" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Конец: нет правил -->
+        <mxCell id="end-no-rules" value="Завершить&#xa;(правил нет)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="515" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Выполнение скриптов -->
+        <mxCell id="eval" value="Выполнить скрипты&#xa;всех правил и&#xa;собрать результаты" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="274" y="640" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Решение: расхождения? -->
+        <mxCell id="dec-found" value="Есть&#xa;расхождения?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="324" y="750" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Инцидент -->
+        <mxCell id="incident" value="Опубликовать&#xa;событие инцидента" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="870" width="180" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="end-incident" value="Конец" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="970" width="100" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Верификация -->
+        <mxCell id="verify" value="Сохранить результат&#xa;успешной верификации" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="870" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="end-verify" value="Конец" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Helvetica;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="130" y="970" width="100" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Связи -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="start" target="parse">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="parse" target="dec-valid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="Нет" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Helvetica;fontSize=11;" edge="1" parent="1" source="dec-valid" target="end-invalid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="Да" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Helvetica;fontSize=11;" edge="1" parent="1" source="dec-valid" target="load">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="load" target="dec-rules">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="Нет" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Helvetica;fontSize=11;" edge="1" parent="1" source="dec-rules" target="end-no-rules">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="Да" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Helvetica;fontSize=11;" edge="1" parent="1" source="dec-rules" target="eval">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="eval" target="dec-found">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="Да" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Helvetica;fontSize=11;" edge="1" parent="1" source="dec-found" target="incident">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="Нет" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;fontFamily=Helvetica;fontSize=11;" edge="1" parent="1" source="dec-found" target="verify">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="incident" target="end-incident">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="verify" target="end-verify">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Подпись -->
+        <mxCell id="caption" value="Алгоритм: RuleEvaluationEngine.process — оценка правил по данным мониторинга" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Helvetica;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1060" width="520" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
